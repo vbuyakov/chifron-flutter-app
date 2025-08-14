@@ -82,3 +82,6 @@ web/.dart_tool/
 *.ipa
 *.keystore
 *.jks
+
+# Development tracking files
+ISSUES_TO_FIX.md
