@@ -49,7 +49,9 @@ class NumberGameInputArea extends StatelessWidget {
                   color: Colors.redAccent,
                   fontSize: 26,
                   decoration: TextDecoration.lineThrough,
+                  
                 ),
+                textScaler: const TextScaler.linear(1.0),
               ),
             ),
           ),
@@ -97,6 +99,7 @@ class NumberGameInputArea extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
+                            textScaler: const TextScaler.linear(1.0),
                           ),
                         ),
                       );
@@ -118,6 +121,7 @@ class NumberGameInputArea extends StatelessWidget {
                               color: Colors.white,
                             ),
                             textAlign: TextAlign.center,
+                            textScaler: const TextScaler.linear(1.0),
                           ),
                         ),
                       );

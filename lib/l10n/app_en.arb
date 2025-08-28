@@ -3,7 +3,7 @@
   "score": "Score",
   "wrong": "Wrong",
   "correct": "Correct",
-  "menuPlaceholder": "Menu",
+  "menuPlaceholder": "Menu", //To remove
   "settings": "Settings",
   "language": "Language",
   "minValue": "Minimum number value",

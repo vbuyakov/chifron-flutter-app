@@ -1,8 +1,8 @@
+import 'package:chifron/widgets/drawer_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:chifron/screens/number_game_screen.dart';
-import 'package:chifron/screens/settings_screen.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:chifron/providers/statistics_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,57 +35,7 @@ class StartScreen extends StatelessWidget {
 
         return Scaffold(
           extendBodyBehindAppBar: true,
-          drawer: Drawer(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.85),
-                  ),
-                  child: Center(
-                    child: Text(
-                      loc.menuPlaceholder,
-                      style: GoogleFonts.orbitron(
-                        color: Colors.cyanAccent,
-                        fontSize: 22,
-                      ),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  leading: Icon(Icons.settings, color: Colors.cyanAccent),
-                  title: Text(loc.settings,
-                      style: GoogleFonts.orbitron(color: Colors.cyanAccent)),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(builder: (_) => const SettingsScreen()),
-                    );
-                  },
-                ),
-                if (EnvConfig.enableDonateKofi)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Center(
-                      child: GestureDetector(
-                        onTap: () async {
-                          final url = EnvConfig.donateUrlKofi;
-                          if (await canLaunchUrl(Uri.parse(url))) {
-                            await launchUrl(Uri.parse(url),
-                                mode: LaunchMode.externalApplication);
-                          }
-                        },
-                        child: Image.asset(
-                          'assets/kofi5.png',
-                          height: 36,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
+          drawer: DrawerMenu(),
           appBar: AppBar(
             title: Text(loc.appTitle),
             leading: Builder(
@@ -141,7 +91,7 @@ class StartScreen extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.cyanAccent,
                         foregroundColor: Colors.black,
-                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
                         textStyle: GoogleFonts.orbitron(
                             fontSize: 28, fontWeight: FontWeight.bold),
                         shape: RoundedRectangleBorder(
@@ -153,19 +103,31 @@ class StartScreen extends StatelessWidget {
                               builder: (_) => const NumberGameScreen()),
                         );
                       },
-                      child: Center(
-                          child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(loc.playNumbers),
-                          const SizedBox(width: 8),
-                          Icon(Icons.rocket_launch_outlined,
-                              color: Colors.black, size: 30),
-                        ],
-                      ))),
+                      child: 
+                      Container(
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 4),
+                          borderRadius: BorderRadius.circular(16),
+                          
+                        ),
+                        child: Center(
+                              child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(loc.playNumbers),
+                              const SizedBox(width: 8),
+                              Icon(Icons.rocket_launch_outlined,
+                                  color: Colors.black, size: 30),
+                            ],
+                          ))
+                      )
+                      ),
                   const SizedBox(height: 18),
                   Spacer(),
-                  DonateKofiButton(),
+                  DonateKofiButton(
+                    label: loc.helpToProject,
+                  ),
                 ],
               ),
             ),

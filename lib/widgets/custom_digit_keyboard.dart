@@ -52,6 +52,7 @@ class CustomDigitKeyboard extends StatelessWidget {
                   for (var item in row)
                     _AnimatedKeyboardButton(
                       label: item is int ? '$item' : null,
+                      
                       icon: item == 'backspace'
                           ? Icons.backspace
                           : item == 'enter'
@@ -133,7 +134,9 @@ class _AnimatedKeyboardButtonState extends State<_AnimatedKeyboardButton> {
               child: Center(
                 child: widget.icon != null
                     ? Icon(widget.icon, color: widget.iconColor ?? Colors.cyanAccent, size: 28)
-                    : Text(widget.label ?? '', style: widget.textStyle),
+                    : Text(widget.label ?? '', style: widget.textStyle,
+                    textScaler: const TextScaler.linear(1.0),
+                    ),
               ),
             ),
           ),

@@ -27,7 +27,7 @@ class LearnNumberProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> generateRandomNumber() async {
+  Future<void> generateRandomNumber({bool dontRepeat = true}) async {
     try {
       _setLoading(true);
       _clearError();
@@ -37,7 +37,10 @@ class LearnNumberProvider extends ChangeNotifier {
       final min = rangeSettings.minValue;
       final max = rangeSettings.maxValue;
       final rand = Random();
-      final newNumber = min + rand.nextInt(max - min + 1);
+      int newNumber;
+      do {
+        newNumber = min + rand.nextInt(max - min + 1);
+      } while (dontRepeat && newNumber == _currentNumber);
 
       debugLog('Generated number: $newNumber');
 
