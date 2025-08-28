@@ -6,6 +6,7 @@ const String emptyWrongValuePlaceholder = '***';
 const int replayButtonCooldownMs = 500;
 
 const List<NumberRange> numberRangePresets = [
+  NumberRange(0, 999, '0-999'),
   NumberRange(0, 100, '0-100'),
   NumberRange(100, 999, '100-999'),
   NumberRange(1000, 5000, '1000-5000'),

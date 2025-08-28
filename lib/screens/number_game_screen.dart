@@ -1,3 +1,4 @@
+import 'package:chifron/widgets/drawer_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -10,6 +11,8 @@ import 'package:chifron/utils/debug_utils.dart';
 import 'package:chifron/screens/start_screen.dart';
 import 'package:chifron/constants.dart';
 import 'package:chifron/providers/settings_provider.dart';
+import 'package:chifron/utils/debug_utils.dart';
+import 'package:flutter/foundation.dart';
 
 class NumberGameScreen extends StatefulWidget {
   const NumberGameScreen({super.key});
@@ -284,6 +287,8 @@ class _NumberGameScreenState extends State<NumberGameScreen>
 
   void _startNewRound() async {
     await _learnNumberProvider.generateRandomNumber();
+  
+    debugLog('New round started with number: ${_learnNumberProvider.currentNumber}');
     setState(() {
       _currentNumber = _learnNumberProvider.currentNumber;
       _replayCount = 0; // Reset replay count for new number
@@ -305,36 +310,7 @@ class _NumberGameScreenState extends State<NumberGameScreen>
     final loc = AppLocalizations.of(context)!;
     return Scaffold(
       extendBodyBehindAppBar: true,
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.85),
-              ),
-              child: Center(
-                child: Text(
-                  loc.menuPlaceholder,
-                  style: GoogleFonts.orbitron(
-                    color: Colors.cyanAccent,
-                    fontSize: 22,
-                  ),
-                ),
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.settings, color: Colors.cyanAccent),
-              title: Text(loc.settings,
-                  style: GoogleFonts.orbitron(color: Colors.cyanAccent)),
-              onTap: () {
-                Navigator.of(context).pop();
-                Navigator.of(context).pushNamed('/settings');
-              },
-            ),
-          ],
-        ),
-      ),
+      drawer: DrawerMenu(),
       appBar: AppBar(
         title: Text(loc.appTitle),
         leading: Builder(
@@ -403,19 +379,22 @@ class _NumberGameScreenState extends State<NumberGameScreen>
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
+                              Icon(Icons.leaderboard, color: Colors.cyanAccent, size: 32),
                               Text(
-                                '${loc.score}: ${todayPercent.toStringAsFixed(1)}%',
+                                '${todayPercent.toStringAsFixed(1)}%',
                                 style: GoogleFonts.orbitron(
                                   color: Colors.cyanAccent,
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                 ),
+                                textScaler: const TextScaler.linear(1.0),
                               ),
                               Row(children: [
                                 Icon(Icons.close,
                                     color: Colors.redAccent, size: 22),
                                 SizedBox(width: 4),
                                 Text('$todayWrong',
+                                    textScaler: const TextScaler.linear(1.0),
                                     style: TextStyle(
                                         color: Colors.redAccent, fontSize: 18)),
                               ]),
@@ -432,6 +411,7 @@ class _NumberGameScreenState extends State<NumberGameScreen>
                                             size: 22),
                                         SizedBox(width: 4),
                                         Text('$todayCorrect',
+                                            textScaler: const TextScaler.linear(1.0),
                                             style: TextStyle(
                                                 color: Colors.greenAccent,
                                                 fontSize: 18)),
@@ -531,9 +511,8 @@ class _NumberGameScreenState extends State<NumberGameScreen>
                     const SizedBox(height: 24),
                     // Speaker (Replay) button
                     Center(
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
+                      child: 
+                   
                           Consumer<LearnNumberProvider>(
                             builder: (context, learnProvider, child) {
                               final replaysLeft =
@@ -541,78 +520,93 @@ class _NumberGameScreenState extends State<NumberGameScreen>
                                       .clamp(0, maxReplayCount);
                               final isReplayLimit =
                                   _replayCount >= maxReplayCount;
-                              return IconButton(
-                                icon: Icon(
-                                  Icons.volume_up,
-                                  size: 36,
-                                  color: Colors.cyanAccent,
-                                ),
-                                onPressed: _isReplayButtonDisabled ||
-                                        learnProvider.isAudioPlaying ||
-                                        isReplayLimit
-                                    ? null
-                                    : () async {
-                                        setState(() {
-                                          _isReplayButtonDisabled = true;
-                                          _replayCount++;
-                                        });
-                                        // Play audio
-                                        try {
-                                          await _learnNumberProvider
-                                              .playCurrentAudio();
-                                        } catch (e) {
-                                          debugError(
-                                              'Audio playback error: $e');
-                                        }
-                                        await Future.delayed(Duration(
-                                            milliseconds:
-                                                replayButtonCooldownMs));
-                                        if (mounted) {
-                                          setState(() {
-                                            _isReplayButtonDisabled = false;
-                                          });
-                                        }
-                                        // If this was the last allowed replay and input is empty or wrong, fire wrong scenario
-                                        if (_replayCount >= maxReplayCount &&
-                                            (_inputValue.isEmpty ||
-                                                _inputValue !=
-                                                    (_currentNumber
-                                                            ?.toString() ??
-                                                        ''))) {
-                                          setState(() {
-                                            _wrongValue = _inputValue.isEmpty
-                                                ? emptyWrongValuePlaceholder
-                                                : _inputValue;
-                                          });
-                                          _startWrongAnimation(
-                                              skipSetWrongValue: true);
-                                        }
-                                      },
-                              );
-                            },
+                              return 
+                              GestureDetector(
+                                
+                              onTap: _isReplayButtonDisabled ||
+                                                learnProvider.isAudioPlaying ||
+                                                isReplayLimit
+                                            ? null
+                                            : () async {
+                                                setState(() {
+                                                  _isReplayButtonDisabled = true;
+                                                  _replayCount++;
+                                                });
+                                                // Play audio
+                                                try {
+                                                  await _learnNumberProvider
+                                                      .playCurrentAudio();
+                                                } catch (e) {
+                                                  debugError(
+                                                      'Audio playback error: $e');
+                                                }
+                                                await Future.delayed(Duration(
+                                                    milliseconds:
+                                                        replayButtonCooldownMs));
+                                                if (mounted) {
+                                                  setState(() {
+                                                    _isReplayButtonDisabled = false;
+                                                  });
+                                                }
+                                                // If this was the last allowed replay and input is empty or wrong, fire wrong scenario
+                                                if (_replayCount >= maxReplayCount &&
+                                                    (_inputValue.isEmpty ||
+                                                        _inputValue !=
+                                                            (_currentNumber
+                                                                    ?.toString() ??
+                                                                ''))) {
+                                                  setState(() {
+                                                    _wrongValue = _inputValue.isEmpty
+                                                        ? emptyWrongValuePlaceholder
+                                                        : _inputValue;
+                                                  });
+                                                  _startWrongAnimation(
+                                                      skipSetWrongValue: true);
+                                                }
+                                              },    
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(
+                                      Icons.volume_up,
+                                      size: 48,
+                                      color: Colors.cyanAccent,
+                                    ),
+                                  ),
+                                  Positioned(
+                                      right: 8,
+                                      bottom: 8,
+                                      
+                                              child: Container(
+                                                width: 24,
+                                                height: 24,
+                                                alignment: Alignment(0,0),
+
+                                                decoration: BoxDecoration(
+                                                  color: Colors.redAccent,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Text(
+                                                  '${(maxReplayCount - _replayCount).clamp(0, maxReplayCount)}',
+                                                  style: GoogleFonts.orbitron(
+                                                    color: Colors.white,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                        
+                                          
+                                        ],
+                              )
+                             );
+                            }
                           ),
                           // Badge for replays left
-                          Positioned(
-                            right: 6,
-                            top: 6,
-                            child: Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.redAccent,
-                                shape: BoxShape.circle,
-                              ),
-                              child: Text(
-                                '${(maxReplayCount - _replayCount).clamp(0, maxReplayCount)}',
-                                style: GoogleFonts.orbitron(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                          
                     ),
                     const SizedBox(height: 24),
 

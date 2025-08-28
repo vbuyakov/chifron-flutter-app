@@ -7,7 +7,7 @@ class EnvConfig {
   static String get _envFile {
     if (Platform.isAndroid) return '.env.android';
     if (Platform.isIOS) return '.env.ios';
-    return '.env'; // Default fallback
+    return ''; // Default fallback
   }
 
   // API Configuration
@@ -42,39 +42,15 @@ class EnvConfig {
     try {
       // Load common .env file first
       await dotenv.load(fileName: '.env');
-      debugLog('Loaded common environment configuration from: .env');
-      debugLog(
-          'API_KEY loaded: ${dotenv.env['API_KEY']?.isNotEmpty == true ? 'YES' : 'NO'}');
-      debugLog(
-          'API_BASE_URL loaded: ${dotenv.env['API_BASE_URL']?.isNotEmpty == true ? 'YES' : 'NO'}');
-
-      // Store the API_KEY and API_BASE_URL from main .env file
-      final mainApiKey = dotenv.env['API_KEY'];
-      final mainApiBaseUrl = dotenv.env['API_BASE_URL'];
+      debugLog('***** Loaded common environment configuration from: .env');
 
       // Then load platform-specific overrides (if they exist)
-      try {
-        await dotenv.load(fileName: _envFile);
-        debugLog('Loaded platform-specific overrides from: $_envFile');
-
-        // Restore API_KEY and API_BASE_URL if they were overwritten
-        if (mainApiKey != null && dotenv.env['API_KEY'] != mainApiKey) {
-          dotenv.env['API_KEY'] = mainApiKey;
-          debugLog('Restored API_KEY from main .env file');
-        }
-        if (mainApiBaseUrl != null &&
-            dotenv.env['API_BASE_URL'] != mainApiBaseUrl) {
-          dotenv.env['API_BASE_URL'] = mainApiBaseUrl;
-          debugLog('Restored API_BASE_URL from main .env file');
-        }
-
-        debugLog(
-            'After override - API_KEY: ${dotenv.env['API_KEY']?.isNotEmpty == true ? 'YES' : 'NO'}');
-        debugLog(
-            'After override - API_BASE_URL: ${dotenv.env['API_BASE_URL']?.isNotEmpty == true ? 'YES' : 'NO'}');
-      } catch (e) {
-        debugLog('No platform-specific configuration found: $_envFile');
-      }
+      
+      if(_envFile != '') {
+        await dotenv.load(fileName: _envFile, mergeWith: Map<String, String>.from(dotenv.env));
+        debugLog('>>>>> Loaded platform-specific overrides from: $_envFile <<<<<');
+      } 
+    
     } catch (e) {
       // If common .env file doesn't exist, try platform-specific only
       try {
@@ -97,6 +73,7 @@ class EnvConfig {
     debugLog('All env vars: ${dotenv.env}');
     debugLog('API_KEY: ${dotenv.env['API_KEY']}');
     debugLog('API_BASE_URL: ${dotenv.env['API_BASE_URL']}');
+    debugLog('DEBUG_MODE: ${dotenv.env['DEBUG_MODE']}');
     debugLog('=====================================');
   }
 
